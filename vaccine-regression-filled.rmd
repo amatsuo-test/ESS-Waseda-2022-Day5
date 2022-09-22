@@ -76,7 +76,7 @@ Using `caret` (or something else if you like), prepare two datasets of pre-proce
 ## Train-test split
 
 ```{r}
-set.seed(20220804)
+set.seed(20220917)
 train_id <- createDataPartition(data_vac_use$Booster_Doses_18Plus_Vax_Pct, times = 1, 
                     p = .7, list = F)
 df_train <- data_vac_use %>% slice(train_id) 
@@ -98,6 +98,7 @@ prep <- df_train %>%
   select(-Booster_Doses_18Plus_Vax_Pct) %>% 
   #select(-dummy1:dummy10)
   preProcess(method = c('center', 'scale'))
+prep
 df_train_prepped <- df_train %>% predict(prep, .)
 df_test_prepped <- df_test %>% predict(prep, .)
 
@@ -186,6 +187,23 @@ rmse(error_train)
 pred_test <- predict(mod_svmradial, newdata = df_test_prepped)
 error_test <- pred_test - df_test_prepped$Booster_Doses_18Plus_Vax_Pct
 rmse(error_test)
+
+```
+```{r}
+mod_rf <- train(Booster_Doses_18Plus_Vax_Pct ~ ., data = df_train_prepped, 
+   method = "rf", trControl = ctrl) 
+
+mod_rf
+
+
+# pred_train <- predict(mod_svmradial)
+# error_train <- pred_train - df_train_prepped$Booster_Doses_18Plus_Vax_Pct
+# rmse(error_train)
+# 
+# pred_test <- predict(mod_svmradial, newdata = df_test_prepped)
+# error_test <- pred_test - df_test_prepped$Booster_Doses_18Plus_Vax_Pct
+# rmse(error_test)
+
 
 ```
 
